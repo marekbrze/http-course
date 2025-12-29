@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/log"
 )
@@ -12,6 +13,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error when reading file")
 	}
+	currentLine := ""
 	for {
 		buffer := make([]byte, 8)
 		bytes, err := file.Read(buffer)
@@ -21,6 +23,13 @@ func main() {
 		if err != nil {
 			log.Fatal("Error when reading buffer")
 		}
-		fmt.Printf("read: %s\n", buffer)
+		parts := strings.Split(string(buffer), "\n")
+		if len(parts) > 1 {
+			currentLine += strings.Join(parts[:len(parts)-1], " ")
+			fmt.Printf("read: %s\n", currentLine)
+			currentLine = parts[len(parts)-1]
+			continue
+		}
+		currentLine += parts[0]
 	}
 }
